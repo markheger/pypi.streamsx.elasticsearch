@@ -42,7 +42,7 @@ The default configuration is "es", this can be set:
 * Using the "Application Configuration" tab of the "Streams Console"
 * Using page selected by the sub tab "Application Configuration"
 * Create a "New application configuration..." using the "Name" "es", no description is necessary
-* Set the following properties for your Elasticsearch database connection: "nodeList" (value <HOST>:<PORT>), "userName", "password" and "sslEnabled" (value true|false)
+* Set the following properties for your Elasticsearch database connection: "nodeList" (value <HOST>:<PORT>), "userName", "password", "sslEnabled" (value true|false), "sslTrustAllCertificates" (value true|false)
 
 
 Sample
@@ -81,7 +81,7 @@ A simple example of a Streams application writing JSON messages to an index, wit
 
 """
 
-__version__='1.0.0'
+__version__='1.1.0'
 
 __all__ = ['bulk_insert', 'bulk_insert_dynamic']
 from streamsx.elasticsearch._elasticsearch import bulk_insert, bulk_insert_dynamic

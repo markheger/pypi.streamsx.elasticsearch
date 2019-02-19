@@ -55,7 +55,7 @@ class TestES(TestCase):
 
         uid = str(uuid.uuid4())
         s = topo.source(JsonData(uid, n)).as_json()
-        es.bulk_insert(s, 'test-index-cloud', 10, credentials=get_credentials())
+        es.bulk_insert(s, 'test-index-cloud', 10, credentials=get_credentials(), ssl_trust_all_certificates=True)
 
         tester = Tester(topo)
         tester.run_for(60)
@@ -74,7 +74,7 @@ class TestES(TestCase):
 
         uid = str(uuid.uuid4())
         s = topo.source(StringData(uid, n)).as_string()
-        es.bulk_insert(s, 'test-index-cloud', 10, credentials=get_credentials())
+        es.bulk_insert(s, 'test-index-cloud', 10, credentials=get_credentials(), ssl_trust_all_certificates=True)
 
         tester = Tester(topo)
         tester.run_for(60)
@@ -92,7 +92,7 @@ class TestES(TestCase):
         streamsx.spl.toolkit.add_toolkit(topo, self.es_toolkit_home)
 
         s = topo.source(['Hello', 'World!']).as_string()
-        es.bulk_insert(s, 'test-index-cloud', credentials=get_credentials())
+        es.bulk_insert(s, 'test-index-cloud', credentials=get_credentials(), ssl_trust_all_certificates=True)
 
         tester = Tester(topo)
         tester.run_for(60)
@@ -112,7 +112,7 @@ class TestES(TestCase):
         s = topo.source([('idx1','{"msg":"This is message number 1"}'), ('idx2','{"msg":"This is message number 2"}')])
         s = s.map(lambda x : x, schema=schema)
         s.print()
-        es.bulk_insert_dynamic(s, index_name_attribute='indexName', message_attribute='document', credentials=get_credentials())
+        es.bulk_insert_dynamic(s, index_name_attribute='indexName', message_attribute='document', credentials=get_credentials(), ssl_trust_all_certificates=True)
 
         tester = Tester(topo)
         tester.run_for(60)
