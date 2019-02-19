@@ -10,7 +10,7 @@ from streamsx.topology.schema import CommonSchema, StreamSchema
 from streamsx.spl.types import rstring
 from urllib.parse import urlparse
     
-def bulk_insert(stream, index_name, bulk_size=1, message_attribute=None, credentials='es', name=None):
+def bulk_insert(stream, index_name, bulk_size=1, message_attribute=None, credentials='es', ssl_trust_all_certificates=False, name=None):
     """Stores JSON documents in a specified index of an Elasticsearch database.
 
     Ingests tuples and stores them in Elasticsearch as documents when bulk size is reached.
@@ -23,6 +23,7 @@ def bulk_insert(stream, index_name, bulk_size=1, message_attribute=None, credent
         bulk_size(int): Size of the bulk to submit to Elasticsearch. The default value is 1.      
         message_attribute(str): Name of the input stream attribute containing the JSON document. Parameter is not required when input stream schema is ``CommonSchema.Json``.                     
         credentials(str): Name of the application configuration containing the credentials as properties or the connection string for your Elasticsearch database. When not set, the application configuration name ``es`` is used.
+        ssl_trust_all_certificates(bool): If set to 'True', the SSL/TLS layer will not verify the server certificate chain. The default is 'False'. This parameter can be overwritten by the application configuration.
         name(str): Sink name in the Streams context, defaults to a generated name.
 
     Returns:
@@ -38,17 +39,25 @@ def bulk_insert(stream, index_name, bulk_size=1, message_attribute=None, credent
     creds = urlparse(credentials)
     if not creds.netloc:
         _op.params['appConfigName'] = credentials
+        if ssl_trust_all_certificates == True:
+            _op.params['sslTrustAllCertificates'] = _op.expression('true')
+        else:
+            _op.params['sslTrustAllCertificates'] = _op.expression('false')
     else:
        _op.params['userName'] = creds.username
        _op.params['password'] = creds.password
        _op.params['nodeList'] = creds.hostname+':'+str(creds.port)
        if creds.scheme == 'https':
            _op.params['sslEnabled'] = _op.expression('true')
+           if ssl_trust_all_certificates == True:
+               _op.params['sslTrustAllCertificates'] = _op.expression('true')
+           else:
+               _op.params['sslTrustAllCertificates'] = _op.expression('false')
 
     return streamsx.topology.topology.Sink(_op)
 
     
-def bulk_insert_dynamic(stream, index_name_attribute, message_attribute, bulk_size=1, credentials='es', name=None):
+def bulk_insert_dynamic(stream, index_name_attribute, message_attribute, bulk_size=1, credentials='es', ssl_trust_all_certificates=False, name=None):
     """Stores JSON documents in a specified index of an Elasticsearch database. The index name is part of the input stream.
 
     Ingests tuples and stores them in Elasticsearch as documents when bulk size is reached.
@@ -68,6 +77,7 @@ def bulk_insert_dynamic(stream, index_name_attribute, message_attribute, bulk_si
         message_attribute(str): Name of the input stream attribute containing the JSON document.                    
         bulk_size(int): Size of the bulk to submit to Elasticsearch. The default value is 1.      
         credentials(str): Name of the application configuration containing the credentials as properties or the connection string for your Elasticsearch database. When not set, the application configuration name ``es`` is used.
+        ssl_trust_all_certificates(bool): If set to 'True', the SSL/TLS layer will not verify the server certificate chain. The default is 'False'. This parameter can be overwritten by the application configuration.
         name(str): Sink name in the Streams context, defaults to a generated name.
 
     Returns:
@@ -81,12 +91,20 @@ def bulk_insert_dynamic(stream, index_name_attribute, message_attribute, bulk_si
     creds = urlparse(credentials)
     if not creds.netloc:
         _op.params['appConfigName'] = credentials
+        if ssl_trust_all_certificates == True:
+            _op.params['sslTrustAllCertificates'] = _op.expression('true')
+        else:
+            _op.params['sslTrustAllCertificates'] = _op.expression('false')
     else:
        _op.params['userName'] = creds.username
        _op.params['password'] = creds.password
        _op.params['nodeList'] = creds.hostname+':'+str(creds.port)
        if creds.scheme == 'https':
            _op.params['sslEnabled'] = _op.expression('true')
+           if ssl_trust_all_certificates == True:
+               _op.params['sslTrustAllCertificates'] = _op.expression('true')
+           else:
+               _op.params['sslTrustAllCertificates'] = _op.expression('false')
 
     return streamsx.topology.topology.Sink(_op)
 
