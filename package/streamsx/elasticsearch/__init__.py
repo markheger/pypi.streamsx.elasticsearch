@@ -8,10 +8,12 @@ Overview
 
 Provides functions to store tuple data as JSON documents in Elasticsearch indices.
 
-Use this package with the following services on IBM Cloud:
+This package exposes the `com.ibm.streamsx.elasticsearch <https://ibmstreams.github.io/streamsx.elasticsearch/>`_ toolkit as Python methods for use with Streaming Analytics service on
+IBM Cloud and IBM Streams including IBM Cloud Private for Data.
 
-  * `Streaming Analytics <https://www.ibm.com/cloud/streaming-analytics>`_
-  * `Compose for Elasticsearch <https://www.ibm.com/cloud/compose/elasticsearch>`_
+ * `Streaming Analytics service <https://console.ng.bluemix.net/catalog/services/streaming-analytics>`_
+ * `IBM Streams developer community <https://developer.ibm.com/streamsdev/>`_
+ * `Compose for Elasticsearch <https://www.ibm.com/cloud/compose/elasticsearch>`_
 
 
 Credentials
@@ -81,7 +83,7 @@ A simple example of a Streams application writing JSON messages to an index, wit
 
 """
 
-__version__='1.1.0'
+__version__='1.1.1'
 
 __all__ = ['bulk_insert', 'bulk_insert_dynamic']
 from streamsx.elasticsearch._elasticsearch import bulk_insert, bulk_insert_dynamic
