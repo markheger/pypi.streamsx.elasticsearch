@@ -58,10 +58,22 @@ cd package
 python3 -u -m unittest streamsx.elasticsearch.tests.test_elasticsearch.TestES
 ```
 
+or
+
+```
+ant test
+```
+
 ### Test with Streaming Analytics service
 
 ```
 export ELASTICSEARCH_TOOLKIT_HOME=<toolkit_location>
 cd package
 python3 -u -m unittest streamsx.elasticsearch.tests.test_elasticsearch.TestCloud
+```
+
+or 
+
+```
+ant test-sas
 ```
