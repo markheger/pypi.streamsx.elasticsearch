@@ -9,7 +9,46 @@ import streamsx.spl.types
 from streamsx.topology.schema import CommonSchema, StreamSchema
 from streamsx.spl.types import rstring
 from urllib.parse import urlparse
-    
+from streamsx.toolkits import download_toolkit
+
+_TOOLKIT_NAME = 'com.ibm.streamsx.elasticsearch'
+
+
+def download_toolkit(url=None, target_dir=None):
+    r"""Downloads the latest Elasticsearch toolkit from GitHub.
+
+    Example for updating the Elasticsearch toolkit for your topology with the latest toolkit from GitHub::
+
+        import streamsx.elasticsearch as es
+        # download Elasticsearch toolkit from GitHub
+        elasticsearch_toolkit_location = es.download_toolkit()
+        # add the toolkit to topology
+        streamsx.spl.toolkit.add_toolkit(topology, elasticsearch_toolkit_location)
+
+    Example for updating the topology with a specific version of the Elasticsearch toolkit using a URL::
+
+        import streamsx.elasticsearch as es
+        url221 = 'https://github.com/IBMStreams/streamsx.elasticsearch/releases/download/v2.1.1/streamsx.elasticsearch.toolkits-2.1.1-20181204-0909.tgz'
+        elasticsearch_toolkit_location = es.download_toolkit(url=url221)
+        streamsx.spl.toolkit.add_toolkit(topology, elasticsearch_toolkit_location)
+
+    Args:
+        url(str): Link to toolkit archive (\*.tgz) to be downloaded. Use this parameter to 
+            download a specific version of the toolkit.
+        target_dir(str): the directory where the toolkit is unpacked to. If a relative path is given,
+            the path is appended to the system temporary directory, for example to /tmp on Unix/Linux systems.
+            If target_dir is ``None`` a location relative to the system temporary directory is chosen.
+
+    Returns:
+        str: the location of the downloaded Elasticsearch toolkit
+
+    .. note:: This function requires an outgoing Internet connection
+    .. versionadded:: 1.2
+    """
+    _toolkit_location = streamsx.toolkits.download_toolkit (toolkit_name=_TOOLKIT_NAME, url=url, target_dir=target_dir)
+    return _toolkit_location
+
+
 def bulk_insert(stream, index_name, bulk_size=1, message_attribute=None, credentials='es', ssl_trust_all_certificates=False, name=None):
     """Stores JSON documents in a specified index of an Elasticsearch database.
 

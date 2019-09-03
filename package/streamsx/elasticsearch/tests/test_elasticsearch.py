@@ -40,7 +40,8 @@ class TestES(TestCase):
     def test_hw(self):
         n = 100
         topo = Topology()
-        streamsx.spl.toolkit.add_toolkit(topo, self.es_toolkit_home)
+        if self.es_toolkit_home is not None:
+            streamsx.spl.toolkit.add_toolkit(topo, self.es_toolkit_home)
 
         s = topo.source(['Hello', 'World!']).as_string()
         es.bulk_insert(s, 'test-index-cloud', credentials=get_credentials(), ssl_trust_all_certificates=True)
@@ -54,7 +55,8 @@ class TestES(TestCase):
     def test_schema(self):
         schema = StreamSchema('tuple<rstring indexName, rstring document>')
         topo = Topology()
-        streamsx.spl.toolkit.add_toolkit(topo, self.es_toolkit_home)
+        if self.es_toolkit_home is not None:
+            streamsx.spl.toolkit.add_toolkit(topo, self.es_toolkit_home)
 
         s = topo.source([('idx1','{"msg":"This is message number 1"}'), ('idx2','{"msg":"This is message number 2"}')])
         s = s.map(lambda x : x, schema=schema)
@@ -83,6 +85,21 @@ class TestCloudRemote(TestCloud):
     def setUp(self):
         Tester.setup_streaming_analytics(self, force_remote_build=True)
         self.es_toolkit_home = os.environ["ELASTICSEARCH_TOOLKIT_HOME"]
+
+    @classmethod
+    def setUpClass(self):
+        super().setUpClass()
+
+
+class TestICPRemote(TestES):
+    def setUp(self):
+        Tester.setup_distributed(self)
+        self.es_toolkit_home = None
+        # setup test config
+        self.test_config = {}
+        job_config = streamsx.topology.context.JobConfig(tracing='info')
+        job_config.add(self.test_config)
+        self.test_config[streamsx.topology.context.ConfigParams.SSL_VERIFY] = False 
 
     @classmethod
     def setUpClass(self):
