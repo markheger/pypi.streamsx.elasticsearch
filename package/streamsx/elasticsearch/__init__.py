@@ -83,7 +83,7 @@ A simple example of a Streams application writing JSON messages to an index, wit
 
 """
 
-__version__='1.1.2'
+__version__='1.2.0'
 
-__all__ = ['bulk_insert', 'bulk_insert_dynamic']
-from streamsx.elasticsearch._elasticsearch import bulk_insert, bulk_insert_dynamic
+__all__ = ['download_toolkit', 'bulk_insert', 'bulk_insert_dynamic']
+from streamsx.elasticsearch._elasticsearch import download_toolkit, bulk_insert, bulk_insert_dynamic
