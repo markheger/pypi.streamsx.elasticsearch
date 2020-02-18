@@ -37,9 +37,19 @@ class TestES(TestCase):
         job_config.add(self.test_config)
         self.test_config[streamsx.topology.context.ConfigParams.SSL_VERIFY] = False  
  
+    def _build_only(self, name, topo):
+        result = streamsx.topology.context.submit("TOOLKIT", topo.graph) # creates tk* directory
+        print(name + ' (TOOLKIT):' + str(result))
+        assert(result.return_code == 0)
+        result = streamsx.topology.context.submit("BUNDLE", topo.graph)  # creates sab file
+        print(name + ' (BUNDLE):' + str(result))
+        assert(result.return_code == 0)
+
     def test_hw(self):
+        print ('\n---------'+str(self))
+        name = 'test_hw'
         n = 100
-        topo = Topology()
+        topo = Topology(name)
         if self.es_toolkit_home is not None:
             streamsx.spl.toolkit.add_toolkit(topo, self.es_toolkit_home)
 
@@ -52,22 +62,58 @@ class TestES(TestCase):
         # Run the test
         tester.test(self.test_ctxtype, self.test_config, always_collect_logs=True)
 
-    def test_schema(self):
+    def test_composite(self):
+        print ('\n---------'+str(self))
+        name = 'test_composite'
+        n = 100
+        topo = Topology(name)
+        if self.es_toolkit_home is not None:
+            streamsx.spl.toolkit.add_toolkit(topo, self.es_toolkit_home)
+
+        s = topo.source(['Hello', 'World!']).as_string()
+        config = {
+            'ssl_trust_all_certificates': True
+        }
+        s.for_each(es.Insert(credentials=get_credentials(), index_name='test-index-cloud', **config))
+
+        tester = Tester(topo)
+        tester.run_for(60)
+    
+        # Run the test
+        tester.test(self.test_ctxtype, self.test_config, always_collect_logs=True)
+
+    def test_composite_with_index_attribute(self):
+        print ('\n---------'+str(self))
+        name = 'test_composite_with_index_attribute'
         schema = StreamSchema('tuple<rstring indexName, rstring document>')
-        topo = Topology()
+        topo = Topology(name)
         if self.es_toolkit_home is not None:
             streamsx.spl.toolkit.add_toolkit(topo, self.es_toolkit_home)
 
         s = topo.source([('idx1','{"msg":"This is message number 1"}'), ('idx2','{"msg":"This is message number 2"}')])
         s = s.map(lambda x : x, schema=schema)
-        s.print()
+        config = {
+            'ssl_trust_all_certificates': True,
+            'index_name_attribute': 'indexName',
+            'message_attribute': 'document'
+        }
+        s.for_each(es.Insert(credentials=get_credentials(), index_name=None, **config))
+        # build only
+        self._build_only(name, topo)
+
+    def test_schema(self):
+        print ('\n---------'+str(self))
+        name = 'test_schema'
+        schema = StreamSchema('tuple<rstring indexName, rstring document>')
+        topo = Topology(name)
+        if self.es_toolkit_home is not None:
+            streamsx.spl.toolkit.add_toolkit(topo, self.es_toolkit_home)
+
+        s = topo.source([('idx1','{"msg":"This is message number 1"}'), ('idx2','{"msg":"This is message number 2"}')])
+        s = s.map(lambda x : x, schema=schema)
         es.bulk_insert_dynamic(s, index_name_attribute='indexName', message_attribute='document', credentials=get_credentials(), ssl_trust_all_certificates=True)
-
-        tester = Tester(topo)
-        tester.run_for(60)
-
-        # Run the test
-        tester.test(self.test_ctxtype, self.test_config, always_collect_logs=True)
+        # build only
+        self._build_only(name, topo)
 
 class TestCloud(TestES):
     def setUp(self):

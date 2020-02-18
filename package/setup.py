@@ -5,7 +5,7 @@ setup(
   packages = ['streamsx.elasticsearch'],
   include_package_data=True,
   version = streamsx.elasticsearch.__version__,
-  description = 'IBM Streams Elasticsearch integration',
+  description = 'Elasticsearch integration for IBM Streams',
   long_description = open('DESC.txt').read(),
   author = 'IBM Streams @ github.com',
   author_email = 'hegermar@de.ibm.com',
@@ -19,7 +19,7 @@ setup(
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
   ],
-  install_requires=['streamsx', 'streamsx.toolkits'],
+  install_requires=['streamsx>=1.14.3a0,<2.0', 'streamsx.toolkits'],
   
   test_suite='nose.collector',
   tests_require=['nose']
