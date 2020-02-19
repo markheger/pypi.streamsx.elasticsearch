@@ -316,11 +316,11 @@ def bulk_insert(stream, index_name, bulk_size=1, message_attribute=None, credent
     """Stores JSON documents in a specified index of an Elasticsearch database.
 
     Ingests tuples and stores them in Elasticsearch as documents when bulk size is reached.
-    If input is ``streamsx.topology.schema.StreamSchema``, then each attribute in the input schema will become an document attribute, the name of the JSON attribute will be the name of the Streams tuple attribute, the value will be taken from the attributes value. 
+    If input is ``streamsx.topology.schema.StreamSchema``, then each attribute in the input schema will become an document attribute, the name of the JSON attribute will be the name of the Stream tuple attribute, the value will be taken from the attributes value. 
     Writes JSON documents without conversion, when input stream is ``CommonSchema.Json``.
 
     Args:
-        stream(Stream): Stream of tuples stored in Elasticsearch as documents. Supports ``CommonSchema.Json`` in the input stream to store the JSON messages in Elasticsearch. Otherwise each attribute in the input schema will become an document attribute, the name of the JSON attribute will be the name of the Streams tuple attribute, the value will be taken from the attributes value.
+        stream(streamsx.topology.topology.Stream): Stream of tuples stored in Elasticsearch as documents. Supports ``CommonSchema.Json`` in the input stream to store the JSON messages in Elasticsearch. Otherwise each attribute in the input schema will become an document attribute, the name of the JSON attribute will be the name of the Streams tuple attribute, the value will be taken from the attributes value.
         index_name(str): Name of the Elasticsearch index, the documents will be inserted to. If the index does not exist in the Elasticsearch server, it will be created by the server. However, you should create and configure indices by yourself before using them, to avoid automatic creation with properties that do not match the use case. For example unsuitable mapping or number of shards or replicas. 
         bulk_size(int): Size of the bulk to submit to Elasticsearch. The default value is 1.      
         message_attribute(str): Name of the input stream attribute containing the JSON document. Parameter is not required when input stream schema is ``CommonSchema.Json``.                     
@@ -329,7 +329,7 @@ def bulk_insert(stream, index_name, bulk_size=1, message_attribute=None, credent
         name(str): Sink name in the Streams context, defaults to a generated name.
 
     Returns:
-        streamsx.topology.topology.Sink: Stream termination.
+        :py:class:`topology_ref:streamsx.topology.topology.Sink`: Stream termination.
 
     .. deprecated:: 1.3.0
         Use the :py:class:`~Insert`.
@@ -377,7 +377,7 @@ def bulk_insert_dynamic(stream, index_name_attribute, message_attribute, bulk_si
         es.bulk_insert_dynamic(sample_stream, index_name_attribute='indexName', message_attribute='document')
 
     Args:
-        stream(Stream): Stream of tuples stored in Elasticsearch as documents. Requires ``streamsx.topology.schema.StreamSchema`` (schema for a structured stream) as input.
+        stream(streamsx.topology.topology.Stream): Stream of tuples stored in Elasticsearch as documents. Requires ``streamsx.topology.schema.StreamSchema`` (schema for a structured stream) as input.
         index_name_attribute(str): Name of the input stream attribute containing the Elasticsearch index, the documents will be inserted to.
         message_attribute(str): Name of the input stream attribute containing the JSON document.                    
         bulk_size(int): Size of the bulk to submit to Elasticsearch. The default value is 1.      
@@ -386,7 +386,7 @@ def bulk_insert_dynamic(stream, index_name_attribute, message_attribute, bulk_si
         name(str): Sink name in the Streams context, defaults to a generated name.
 
     Returns:
-        streamsx.topology.topology.Sink: Stream termination.
+        :py:class:`topology_ref:streamsx.topology.topology.Sink`: Stream termination.
 
     .. deprecated:: 1.3.0
         Use the :py:class:`~Insert`.
